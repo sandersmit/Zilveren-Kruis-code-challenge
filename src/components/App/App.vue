@@ -1,3 +1,73 @@
+<script setup lang="ts">
+import { ref, reactive } from 'vue';
+
+//Adres en contactgegevens
+const inputfieldFirstName = ref();
+const inputfieldPrefix = ref();
+const inputfieldLastName = ref();
+const inputfieldGender = ref();
+const inputfieldBirthDate = ref();
+const inputfieldSocialNumb = ref();
+//Gekozen pakket
+const inputfieldBasisverzekering = ref();
+
+const invalid = ref(true);
+
+const inputfieldEigenrisico = ref()
+const optionsEigenrisico = ref([
+    { text: 'Geen eigenrisico geselecteerd'},
+  { text: ' € 385 - verplicht eigen risico', value: 385 },
+  { text: '€ 885 - korting van € 22 per jaar', value: 885 },
+])
+
+
+const inputfieldAanvullendeverzekering = ref();
+const optionsAanvullendeverzekering= ref([
+  { text: 'Geen aanvullende geselecteerd'},
+  { text: 'Aanvullend 1 - € 21,38 per jaar', value: 21.38 },
+  { text: 'Aanvullend 2 - € 85,06 per jaar', value: 85.06 },
+  { text: 'Aanvullend 3 - € 198,63 per jaar', value: 198.63 },
+  { text: 'Aanvullend 4 - € 359,73 per jaar', value: 359.73 },
+])
+
+
+
+const inputfieldTandverzekering = ref();
+const optionsTandverzekering= ref([
+  { text: 'Geen tandartsverzekering geselecteerd'},
+  { text: 'Tand 1 - € 80,28 per jaar', value: 80.28 },
+  { text: 'Tand 2 - € 221,65 per jaar', value: 221.65 },
+  { text: 'Tand 3 - € 449,36 per jaa', value: 449.36 },
+])
+//Totaalpremie
+const inputfieldBetaaltermijn = ref();
+const optionsBetaaltermijn= ref([
+  { text: 'Geen betaaltermijn geselecteerd'},
+  { text: 'per maand', value: 'per maand' },
+  { text: 'per kwartaal', value: 'per kwartaal' },
+  { text: 'per jaar', value: 'per jaar' },
+])
+
+
+//const inputfieldTotaalpremie = ref();
+const inputfieldTotaalpremie = reactive({
+    total1: inputfieldEigenrisico,
+    total2: inputfieldAanvullendeverzekering,
+    total3: inputfieldTandverzekering
+})
+
+function validation(event:any) {
+  if (event.target.value == "") {
+    console.log("empty")
+    invalid.value = true
+  }else{
+    console.log(event.target.tagName )
+    invalid.value = false
+  }
+}
+
+
+</script>
 <template>
     <div id="app" class="main-placeholder">
         <!-- HEADER -->
@@ -243,10 +313,11 @@
                         <h3>Persoonlijke gegevens</h3>
                         <div class="form-input my-4">
                             <div class="input__group">
-                                <label class="input__title">Naam</label>
+                                <label class="input__title">Naam?</label>
                                 <input
                                     class="input__field form-control"
                                     type="text"
+                                    v-model="inputfieldFirstName"
                                 />
                             </div>
                         </div>
@@ -258,6 +329,7 @@
                                 <input
                                     class="input__field form-control"
                                     type="text"
+                                    v-model="inputfieldPrefix"
                                 />
                             </div>
                         </div>
@@ -267,6 +339,7 @@
                                 <input
                                     class="input__field form-control"
                                     type="text"
+                                    v-model="inputfieldLastName"
                                 />
                             </div>
                         </div>
@@ -279,9 +352,11 @@
                                     >
                                         <input
                                             id="man"
+                                            value="man"
                                             class="radio__input custom-control-input"
                                             type="radio"
                                             name="geslacht"
+                                            v-model="inputfieldGender"
                                         />
                                         <label
                                             class="radio__label custom-control-label"
@@ -290,14 +365,17 @@
                                             Man
                                         </label>
                                     </div>
+
                                     <div
                                         class="radio custom-radio radio__option"
                                     >
                                         <input
                                             id="vrouw"
+                                            value="vrouw"
                                             class="radio__input custom-control-input"
                                             type="radio"
                                             name="geslacht"
+                                            v-model="inputfieldGender"
                                         />
                                         <label
                                             class="radio__label custom-control-label"
@@ -314,10 +392,8 @@
                                 <label class="input__title">
                                     Geboortedatum
                                 </label>
-                                <input
-                                    class="input__field form-control"
-                                    type="text"
-                                />
+                                <label for="start">Start date:</label>
+                                <input  class="input__field form-control" type="date" id="start" name="trip-start" min="1900-01-01" max="2018-12-31" v-model="inputfieldBirthDate" />
                             </div>
                         </div>
                         <div class="form-input my-4">
@@ -328,11 +404,13 @@
                                 <input
                                     class="input__field form-control is-invalid"
                                     type="text"
+                                    v-model="inputfieldSocialNumb"
+                                    @blur="validation"
                                 />
                             </div>
                             <div
                                 class="input__feedback invalid-feedback mt-1"
-                                aria-live="polite"
+                                aria-live="polite"  v-show="invalid"
                             >
                                 <span
                                     >Helaas is het ingevoerde
@@ -343,6 +421,7 @@
                         </div>
                     </div>
 
+
                     <h2 class="mt-5">Verzekering</h2>
                     <div class="form-group">
                         <h3>Basisverzekering</h3>
@@ -352,6 +431,7 @@
                             geaccepteerd. De overheid bepaalt welke zorg hierin
                             zit en dit is dus bij elke verzekeraar hetzelfde.
                         </p>
+
                         <div class="input__group">
                             <label class="input__title">
                                 Kies uw basisverzekering
@@ -367,6 +447,7 @@
                                             name="radio-insurance"
                                             id="radio-insurance-basis-budget"
                                             class="radio__input custom-control-input"
+                                            v-model="inputfieldBasisverzekering"
                                         />
                                         <label
                                             for="radio-insurance-basis-budget"
@@ -394,6 +475,7 @@
                                             name="radio-insurance"
                                             id="radio-insurance-basis-zeker"
                                             class="radio__input custom-control-input"
+                                            v-model="inputfieldBasisverzekering"
                                         />
                                         <label
                                             for="radio-insurance-basis-zeker"
@@ -418,6 +500,7 @@
                                             name="radio-insurance"
                                             id="radio-insurance-basis-exclusief-(restitutie)"
                                             class="radio__input custom-control-input"
+                                            v-model="inputfieldBasisverzekering"
                                         />
                                         <label
                                             for="radio-insurance-basis-exclusief-(restitutie)"
@@ -435,16 +518,19 @@
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="form-group">
                         <div class="form-input my-4">
                             <div class="input__group">
                                 <label class="input__title">
                                     Kies je betaaltermijn
                                 </label>
-                                <select class="form-control">
-                                    <option>per maand</option>
-                                    <option>per kwartaal</option>
-                                    <option selected>per jaar</option>
+                                <select v-model="inputfieldBetaaltermijn"  class="form-control">
+                                    <option v-for="option in optionsBetaaltermijn" :key="option.value" :value="option.value">
+                                    {{ option.text }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -452,16 +538,24 @@
                     <div class="form-group">
                         <h3>Eigen risico</h3>
                         <div class="form-input my-4">
-                            <div class="input__group">
+
+                            <div v-if="inputfieldBasisverzekering" class="input__group">
                                 <label class="input__title">
                                     Kies de hoogste van het eigen risico
                                 </label>
-                                <select class="form-control">
-                                    <option>
-                                        € 385 - verplicht eigen risico
+                                <select v-model="inputfieldEigenrisico"  class="form-control">
+                                    <option v-for="option in optionsEigenrisico" :key="option.value" :value="option.value">
+                                        {{ option.text }}
                                     </option>
+                                </select>
+                            </div>
+                            <div v-else class="input__group">
+                                <label class="input__title">
+                                     Kies de hoogste van het eigen risico
+                                </label>
+                                <select  class="form-control">
                                     <option>
-                                        € 885 - korting van € 22 per jaar
+                                        Kies eerst een basis verzekering
                                     </option>
                                 </select>
                             </div>
@@ -480,22 +574,9 @@
                                 <label class="input__title">
                                     Kies uw aanvullende verzekering
                                 </label>
-                                <select class="form-control">
-                                    <option selected>
-                                        Geen aanvullende verzekering
-                                        geselecteerd
-                                    </option>
-                                    <option>
-                                        Aanvullend 1 - € 21,38 per jaar
-                                    </option>
-                                    <option>
-                                        Aanvullend 2 - € 85,06 per jaar
-                                    </option>
-                                    <option>
-                                        Aanvullend 3 - € 198,63 per jaar
-                                    </option>
-                                    <option>
-                                        Aanvullend 4 - € 359,73 per jaar
+                                <select v-model="inputfieldAanvullendeverzekering"  class="form-control">
+                                    <option v-for="option in optionsAanvullendeverzekering" :key="option.value" :value="option.value">
+                                    {{ option.text }}
                                     </option>
                                 </select>
                             </div>
@@ -507,13 +588,10 @@
                                 <label class="input__title">
                                     Kies uw tandartsverzekering
                                 </label>
-                                <select class="form-control">
-                                    <option selected>
-                                        Geen tandartsverzekering geselecteerd
+                                <select v-model="inputfieldTandverzekering"  class="form-control">
+                                    <option v-for="option in optionsTandverzekering" :key="option.value" :value="option.value">
+                                    {{ option.text }}
                                     </option>
-                                    <option>Tand 1 - € 80,28 per jaar</option>
-                                    <option>Tand 2 - € 221,65 per jaar</option>
-                                    <option>Tand 3 - € 449,36 per jaar</option>
                                 </select>
                             </div>
                         </div>
@@ -522,12 +600,81 @@
                     <h2 class="mt-5">Controleren</h2>
                     <div class="form-group">
                         <h3>Gekozen pakket</h3>
+                        <ul>
+                            <li>Gekozen basisverzekering: &euro; {{ inputfieldBasisverzekering }}</li>
+                            <li>Gekozen eigen risico: &euro; {{inputfieldEigenrisico}}</li>
+                            <li>Gekozen aanvullende verzekering: &euro;{{inputfieldAanvullendeverzekering}}</li>
+                            <li>Gekozen tandverzekering: &euro;{{inputfieldTandverzekering}}</li>
+                        </ul>
                     </div>
                     <div class="form-group">
                         <h3>Totaalpremie</h3>
+                        <ul>
+                            <li v-if="inputfieldBetaaltermijn">Betaaltermijn: {{ inputfieldBetaaltermijn }}</li>
+                            <li v-else>Geen betaaltermijn geselecteerd</li>
+
+                            <li v-if="inputfieldTotaalpremie.total1 && !inputfieldTotaalpremie.total2 && !inputfieldTotaalpremie.total3">Totaalpremie: &euro; {{ inputfieldTotaalpremie.total1 }}</li>
+                            <li v-else-if="inputfieldTotaalpremie.total1 && inputfieldTotaalpremie.total2 && !inputfieldTotaalpremie.total3">Totaalpremie: &euro;{{ inputfieldTotaalpremie.total1 + inputfieldTotaalpremie.total2 }}</li>
+                            <li v-else-if="inputfieldTotaalpremie.total1 && inputfieldTotaalpremie.total2 && inputfieldTotaalpremie.total3">Totaalpremie: &euro; {{ inputfieldTotaalpremie.total1 + inputfieldTotaalpremie.total2 +  inputfieldTotaalpremie.total3 }}</li>
+                            <li v-else-if="inputfieldTotaalpremie.total1">Totaalpremie: &euro; {{ inputfieldTotaalpremie.total1 }}</li>
+                            <li v-else-if="inputfieldTotaalpremie.total2">Totaalpremie: &euro; {{ inputfieldTotaalpremie.total2 }}</li>
+                            <li v-else-if="inputfieldTotaalpremie.total3">Totaalpremie: &euro; {{ inputfieldTotaalpremie.total3 }}</li>
+
+                            <li v-else> Geen verzekering geselecteerd</li>
+                        </ul>
                     </div>
+
                     <div class="form-group">
                         <h3>Adres en contactgegevens</h3>
+                        <!-- -----------possible UX for user------------- -->
+
+                        <!-- <label class="col-sm-2 col-form-label">Naam</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" :placeholder="`${inputfieldFirstName }`" readonly>
+                        </div>
+                        <label class="col-sm-2 col-form-label">tussenvoegsel</label>
+                        <div class="col-sm-10">
+                            <input v-if="inputfieldPrefix" class="form-control" type="text" :placeholder="`${inputfieldPrefix }`" readonly>
+                            <input v-else class="form-control" type="text" placeholder="" readonly>
+                        </div>
+                        <label class="col-sm-2 col-form-label">achternaam</label>
+                        <div class="col-sm-10">
+                            <input v-if="inputfieldPrefix" class="form-control" type="text" :placeholder="`${inputfieldLastName }`" readonly>
+                            <input v-else class="form-control" type="text" placeholder="" readonly>
+                        </div>
+
+                        <div class="form-input my-4">
+                            <div class="input__group">
+                                <label class="input__title">Geslacht</label>
+                                <div class="form-row">
+                                    <div
+                                        class="radio custom-radio radio__option"
+                                    >
+                                        <input
+                                            name="geslachtt"
+                                            class="radio__input custom-control-input"
+                                            type="radio"
+                                            readonly
+                                            checked
+                                        />
+                                        <label
+                                            class="radio__label custom-control-label"
+                                        >
+                                        {{ inputfieldGender }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr> -->
+                        <ul>
+                            <li>Naam: {{ inputfieldFirstName }}</li>
+                            <li>Tussenvoegsel: {{ inputfieldPrefix }}</li>
+                            <li>Achternaam: {{ inputfieldLastName }}</li>
+                            <li>Geslacht: {{ inputfieldGender }}</li>
+                            <li>Geboortedatum: {{ inputfieldBirthDate }}</li>
+                            <li>Burgerservicenummer: {{ inputfieldSocialNumb }}</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="col-4">
